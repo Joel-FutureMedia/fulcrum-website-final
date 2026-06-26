@@ -33,9 +33,13 @@ app.listen(PORT, '0.0.0.0', () => {
     .then((result) => console.log('SMTP connection ready:', result))
     .catch((err) => {
       console.error('SMTP connection check failed:', err.message);
+      const info = getMailTransportInfo();
+      if (!info.passwordConfigured) {
+        console.error('SMTP_PASS is not set. Add it in Dokploy → Environment, then redeploy.');
+      }
       console.error(
-        'If ports show as blocked above, your deployment host blocks outbound SMTP. ' +
-          'Run this app on the same server/network as mail.fulcrum.com.na (not a blocked cloud platform).'
+        'Dokploy/VPS fix: whitelist the outbound IP from logs on mail.fulcrum.com.na, ' +
+          'or use SMTP_HOST=host.docker.internal if mail runs on the same VPS.'
       );
     });
 });

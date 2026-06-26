@@ -64,6 +64,64 @@ docker rm fulcrum-website
 
 Use any host port you prefer, e.g. `-p 8080:3014` to access it on port 8080.
 
+## Dokploy (VPS)
+
+### 1. Environment variables
+
+In Dokploy → your application → **Environment**, add:
+
+```env
+PORT=3014
+SMTP_HOST=mail.fulcrum.com.na
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=build@fulcrum.com.na
+SMTP_PASS=your-mailbox-password
+SMTP_FROM=build@fulcrum.com.na
+SMTP_TO=build@fulcrum.com.na
+```
+
+Click **Save**, then **Redeploy** (not just restart) so the container picks up changes.
+
+If using **Docker Compose** in Dokploy, the compose file must reference variables with `env_file: .env` or `${SMTP_PASS}` — variables in the Dokploy UI are not injected automatically otherwise.
+
+### 2. Fix `ETIMEDOUT` on Dokploy
+
+On a VPS this usually means the **mail server firewall** is blocking your Docker container’s outbound IP, not that SMTP is disabled.
+
+After deploy, check logs for:
+
+```
+[mail] Server outbound IP (whitelist on mail firewall if needed): x.x.x.x
+[mail] TCP port 587: blocked (ETIMEDOUT)
+```
+
+**Fix A — Whitelist the VPS IP on the mail server**
+
+In cPanel/WHM (CSF firewall) on `mail.fulcrum.com.na`, allow the outbound IP from the logs.
+
+**Fix B — Mail runs on the same VPS as Dokploy**
+
+Point SMTP at the host machine instead of going out over the internet:
+
+```env
+SMTP_HOST=host.docker.internal
+SMTP_PORT=587
+SMTP_SECURE=false
+```
+
+The `docker-compose.yml` includes `extra_hosts: host.docker.internal:host-gateway` for this.
+
+**Fix C — Try port 587 instead of 465**
+
+Some networks block 465 but allow 587. Use the env vars above (`SMTP_PORT=587`, `SMTP_SECURE=false`).
+
+### 3. Traefik domain
+
+If using `docker-compose.yml`, replace `your-domain.com` in the Traefik labels with your real domain.
+
+If using **Dockerfile** deploy in Dokploy, set the domain in the Dokploy **Domains** tab instead.
+
 ## Project Structure
 
 ```

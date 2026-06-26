@@ -1,0 +1,29 @@
+services:
+  fulcrum-website:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: ${PORT:-3014}
+      SMTP_HOST: ${SMTP_HOST:-mail.fulcrum.com.na}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-build@fulcrum.com.na}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM:-build@fulcrum.com.na}
+      SMTP_TO: ${SMTP_TO:-build@fulcrum.com.na}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - dokploy-network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.fulcrum-website.rule=Host(`your-domain.com`)
+      - traefik.http.routers.fulcrum-website.entrypoints=websecure
+      - traefik.http.routers.fulcrum-website.tls.certResolver=letsencrypt
+      - traefik.http.services.fulcrum-website.loadbalancer.server.port=3014
+
+networks:
+  dokploy-network:
+    external: true

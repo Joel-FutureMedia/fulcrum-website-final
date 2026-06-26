@@ -121,6 +121,7 @@ export function getMailTransportInfo() {
     user: smtpConfig.user,
     from: smtpConfig.from,
     to: smtpConfig.to,
+    passwordConfigured: Boolean(smtpConfig.pass),
     profiles: getSmtpProfiles().map((profile) => ({
       name: profile.name,
       port: profile.port,
@@ -129,7 +130,18 @@ export function getMailTransportInfo() {
   };
 }
 
+async function logOutboundIp() {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    console.log('[mail] Server outbound IP (whitelist on mail firewall if needed):', data.ip);
+  } catch {
+    console.warn('[mail] Could not detect outbound IP');
+  }
+}
+
 export async function diagnoseMailConnectivity() {
+  await logOutboundIp();
   const host = await resolveMailHost();
   const ports = [...new Set(getSmtpProfiles().map((profile) => profile.port))];
   const results = [];
@@ -149,9 +161,9 @@ export async function diagnoseMailConnectivity() {
   const anyReachable = results.some((result) => result.ok);
   if (!anyReachable) {
     console.error(
-      '[mail] This server cannot reach your mail host on SMTP ports. ' +
-        'Cloud hosts often block outbound 465/587. Deploy on the same server/network as mail.fulcrum.com.na, ' +
-        'or ask your host to allow outbound SMTP.'
+      '[mail] This container cannot reach your mail host on SMTP ports. ' +
+        'On Dokploy/VPS: whitelist the outbound IP above in your mail server firewall (cPanel CSF/WHM), ' +
+        'or if mail runs on the same VPS set SMTP_HOST=host.docker.internal and SMTP_PORT=587.'
     );
   }
 
