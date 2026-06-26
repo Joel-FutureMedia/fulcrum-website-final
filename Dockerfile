@@ -15,7 +15,7 @@ FROM node:22-alpine AS production
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3013
+ENV PORT=3014
 
 ENV SMTP_HOST=mail.fulcrum.com.na
 ENV SMTP_PORT=465
@@ -32,6 +32,6 @@ COPY --from=builder /app/dist ./dist
 COPY server ./server
 COPY src/utils ./src/utils
 
-EXPOSE 3013
+EXPOSE 3014
 
 CMD ["node", "server/index.js"]

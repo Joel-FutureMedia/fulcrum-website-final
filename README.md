@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-Runs the site and email API together on http://localhost:3013. Do not use `vite` directly — the form needs the Node server for `/api/send-email`.
+Runs the site and email API together on http://localhost:3014. Do not use `vite` directly — the form needs the Node server for `/api/send-email`.
 
 ## Production
 
@@ -23,7 +23,7 @@ npm run build
 npm start
 ```
 
-Serves the site and email API on http://localhost:3013.
+Serves the site and email API on http://localhost:3014.
 
 ## Docker
 
@@ -33,16 +33,16 @@ Build the image:
 docker build -t fulcrum-website .
 ```
 
-Run the container (maps port 3013 on your machine to port 3013 in the container):
+Run the container (maps port 3014 on your machine to port 3014 in the container):
 
 ```bash
-docker run -d -p 3013:3013 --name fulcrum-website fulcrum-website
+docker run -d -p 3014:3014 --name fulcrum-website fulcrum-website
 ```
 
 Optional SMTP overrides:
 
 ```bash
-docker run -d -p 3013:3013 --name fulcrum-website \
+docker run -d -p 3014:3014 --name fulcrum-website \
   -e SMTP_HOST=mail.fulcrum.com.na \
   -e SMTP_PORT=465 \
   -e SMTP_SECURE=true \
@@ -53,7 +53,7 @@ docker run -d -p 3013:3013 --name fulcrum-website \
   fulcrum-website
 ```
 
-Open [http://localhost:3013](http://localhost:3013).
+Open [http://localhost:3014](http://localhost:3014).
 
 Stop and remove:
 
@@ -62,7 +62,7 @@ docker stop fulcrum-website
 docker rm fulcrum-website
 ```
 
-Use any host port you prefer, e.g. `-p 8080:3013` to access it on port 8080.
+Use any host port you prefer, e.g. `-p 8080:3014` to access it on port 8080.
 
 ## Project Structure
 

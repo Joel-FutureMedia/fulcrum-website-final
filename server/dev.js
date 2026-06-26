@@ -3,7 +3,7 @@ import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import { registerEmailRoute } from './routes.js';
 
-const PORT = Number(process.env.PORT || 3013);
+const PORT = Number(process.env.PORT || 3014);
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));

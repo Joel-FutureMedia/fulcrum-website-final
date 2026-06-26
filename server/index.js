@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { registerEmailRoute } from './routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PORT = Number(process.env.PORT || 3013);
+const PORT = Number(process.env.PORT || 3014);
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
