@@ -15,12 +15,21 @@ export async function sendEmail(formData) {
   try {
     data = await response.json();
   } catch {
+    if (!response.ok) {
+      throw new Error(
+        response.status === 404
+          ? 'Email service is not available. Make sure the Node server is running (not just static files).'
+          : `Failed to send email (HTTP ${response.status})`
+      );
+    }
     throw new Error('Failed to send email');
   }
 
   if (!response.ok || !data.success) {
     if (response.status === 404) {
-      throw new Error('Email service is not available. Restart the server with npm run dev or npm start.');
+      throw new Error(
+        'Email service is not available. Make sure the Node server is running (not just static files).'
+      );
     }
     throw new Error(data.message || 'Failed to send email');
   }

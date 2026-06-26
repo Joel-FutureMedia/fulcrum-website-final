@@ -99,12 +99,40 @@ fulcrum_website/
 
 The apply form posts to `/api/send-email`, which sends mail via SMTP (`mail.fulcrum.com.na`) using **nodemailer** on the same Node server that serves the site in production/Docker. In development, Vite proxies the same endpoint.
 
+**Important:** The form will not work if you deploy only the `dist/` static files. You must run the Node server (`npm start` or the Docker image).
+
 SMTP settings can be overridden with environment variables:
 
 - `SMTP_HOST` (default: `mail.fulcrum.com.na`)
 - `SMTP_PORT` (default: `465`)
 - `SMTP_SECURE` (default: `true`; set `false` for port `587`)
 - `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` / `SMTP_TO`
+
+### Troubleshooting email in production
+
+On server startup you should see:
+
+```
+SMTP config: { host, port, secure, user, from, to }
+SMTP connection verified successfully
+```
+
+If SMTP verification fails, check your environment variables and that the host allows outbound connections on port 465. Many cloud hosts block SMTP ports.
+
+When a form is submitted, logs will show:
+
+```
+[send-email] Submission received { applicant, email }
+[send-email] Email sent successfully
+```
+
+Or on failure:
+
+```
+[send-email] Failed to send email: ...
+```
+
+The form now shows an error to the user if sending fails (it no longer reports success before the email is actually sent).
 
 ## Email Template
 

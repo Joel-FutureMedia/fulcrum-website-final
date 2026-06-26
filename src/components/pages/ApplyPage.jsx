@@ -15,6 +15,7 @@ const INITIAL_FORM = {
 export default function ApplyPage({ isActive }) {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [status, setStatus] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   function handleChange(field) {
     return (e) => setFormData((prev) => ({ ...prev, [field]: e.target.value }));
@@ -24,20 +25,27 @@ export default function ApplyPage({ isActive }) {
     setStatus(null);
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    if (submitting) return;
 
-    const payload = { ...formData };
-    setFormData(INITIAL_FORM);
-    setStatus({
-      type: 'success',
-      message:
-        'Your application has been sent. We review every submission and respond where there is a fit.',
-    });
-
-    sendEmail(payload).catch((err) => {
-      console.error('Form submission failed:', err);
-    });
+    setSubmitting(true);
+    try {
+      await sendEmail({ ...formData });
+      setFormData(INITIAL_FORM);
+      setStatus({
+        type: 'success',
+        message:
+          'Your application has been sent. We review every submission and respond where there is a fit.',
+      });
+    } catch (err) {
+      setStatus({
+        type: 'error',
+        message: err.message || 'Failed to send your application. Please try again.',
+      });
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -130,8 +138,8 @@ export default function ApplyPage({ isActive }) {
               />
           </div>
 
-          <button type="submit" className="apply-btn">
-            Send it
+          <button type="submit" className="apply-btn" disabled={submitting}>
+            {submitting ? 'Sending…' : 'Send it'}
           </button>
 
           <span className="contact-note" style={{ display: 'block', marginTop: '20px' }}>

@@ -15,6 +15,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+export async function verifySmtpConnection() {
+  await transporter.verify();
+}
+
 export async function sendApplicationEmail(formData) {
   const applicantName = formData.fullName?.trim() || 'Unknown Applicant';
   const html = buildApplicationEmailHtml(formData);
