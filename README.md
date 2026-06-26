@@ -113,26 +113,66 @@ SMTP settings can be overridden with environment variables:
 On server startup you should see:
 
 ```
-SMTP config: { host, port, secure, user, from, to }
-SMTP connection verified successfully
+[mail] Resolved mail.fulcrum.com.na -> x.x.x.x
+[mail] TCP port 465: reachable
+SMTP connection ready: { profile, port, host }
 ```
 
-If SMTP verification fails, check your environment variables and that the host allows outbound connections on port 465. Many cloud hosts block SMTP ports.
+#### Why it works locally but not when deployed
+
+Your **local machine can reach** `mail.fulcrum.com.na` on port 465. Many **cloud hosts block outbound SMTP** (ports 465 and 587) to prevent spam. That causes `ETIMEDOUT` — the connection never completes. This is a network/hosting restriction, not a bug in the form code.
+
+Startup logs will show which ports are blocked:
+
+```
+[mail] TCP port 465: blocked (ETIMEDOUT)
+[mail] TCP port 587: blocked (ETIMEDOUT)
+```
+
+#### How to fix it
+
+**Option A — Deploy on fulcrum hosting (recommended)**
+
+Run the Node app on the **same server or network** as `mail.fulcrum.com.na`. Then set:
+
+```env
+SMTP_HOST=127.0.0.1
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=build@fulcrum.com.na
+SMTP_PASS=your-mailbox-password
+SMTP_FROM=build@fulcrum.com.na
+SMTP_TO=build@fulcrum.com.na
+```
+
+**Option B — Use a VPS that allows outbound SMTP**
+
+Deploy on a VPS (not Railway/Render-style platforms that block SMTP) where ports 465/587 are open.
+
+**Option C — Pass SMTP env vars at deploy time**
+
+When using Docker, pass credentials at runtime (they are not baked into the image):
+
+```bash
+docker run -d -p 3014:3014 \
+  -e SMTP_HOST=mail.fulcrum.com.na \
+  -e SMTP_PORT=465 \
+  -e SMTP_SECURE=true \
+  -e SMTP_USER=build@fulcrum.com.na \
+  -e SMTP_PASS=your-password \
+  -e SMTP_FROM=build@fulcrum.com.na \
+  -e SMTP_TO=build@fulcrum.com.na \
+  fulcrum-website
+```
 
 When a form is submitted, logs will show:
 
 ```
 [send-email] Submission received { applicant, email }
-[send-email] Email sent successfully
+[send-email] Sent via SMTP configured (port 465) messageId=...
 ```
 
-Or on failure:
-
-```
-[send-email] Failed to send email: ...
-```
-
-The form now shows an error to the user if sending fails (it no longer reports success before the email is actually sent).
+The form shows an error to the user if sending fails.
 
 ## Email Template
 
