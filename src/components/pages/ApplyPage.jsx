@@ -50,21 +50,19 @@ export default function ApplyPage({ isActive }) {
 
   return (
     <div id="page-apply" className={`page${isActive ? ' active' : ''}`}>
-      <div className="investors-hero" style={{ paddingBottom: '60px' }}>
+      <div className="investors-hero apply-hero">
         <span className="eyebrow">Apply to build with us</span>
-        <h1 style={{ fontSize: 'clamp(2rem,4vw,3.2rem)', marginBottom: '24px' }}>
-          Tell us what you are working on.
-        </h1>
-        <p style={{ color: 'var(--muted)' }}>
+        <h1 className="apply-hero-title">Tell us what you are working on.</h1>
+        <p className="apply-hero-lead">
           All fields are optional. The quality of what is written — and what is left unanswered
           — is itself signal.
         </p>
       </div>
 
-      <div style={{ padding: '72px 6% 100px', maxWidth: '680px', margin: '0 auto' }}>
+      <div className="apply-form-section">
         <form onSubmit={handleSubmit}>
           <div className="form-row">
-            <div className="form-group" style={{ marginBottom: 0 }}>
+            <div className="form-group form-group-inline">
               <label htmlFor="fullName">Full name</label>
               <input
                 id="fullName"
@@ -74,7 +72,7 @@ export default function ApplyPage({ isActive }) {
                 onChange={handleChange('fullName')}
               />
             </div>
-            <div className="form-group" style={{ marginBottom: 0 }}>
+            <div className="form-group form-group-inline">
               <label htmlFor="email">Email address</label>
               <input
                 id="email"
@@ -84,7 +82,7 @@ export default function ApplyPage({ isActive }) {
                 onChange={handleChange('email')}
               />
             </div>
-            <div className="form-group" style={{ marginBottom: 0 }}>
+            <div className="form-group form-group-inline">
               <label htmlFor="phone">Phone number</label>
               <input
                 id="phone"
@@ -138,11 +136,11 @@ export default function ApplyPage({ isActive }) {
               />
           </div>
 
-          <button type="submit" className="apply-btn" disabled={submitting}>
+          <button type="submit" className="apply-btn apply-btn-submit" disabled={submitting}>
             {submitting ? 'Sending…' : 'Send it'}
           </button>
 
-          <span className="contact-note" style={{ display: 'block', marginTop: '20px' }}>
+          <span className="contact-note apply-form-note">
             We review every submission. We respond to the ones where there is a fit.
           </span>
         </form>

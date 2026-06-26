@@ -31,12 +31,12 @@ export default function TeamPage({ isActive }) {
         <span className="eyebrow">Team</span>
         <h1>The people behind the studio.</h1>
       </div>
-      <div style={{ padding: '80px 0 0' }}>
+      <div className="team-section">
         <div className="team-grid">
           {TEAM.map((member) => (
             <div className="team-member" key={member.name}>
               <div className="team-avatar">
-                <img src={member.image} alt={member.alt} />
+                <img src={member.image} alt={member.alt} loading="lazy" decoding="async" />
               </div>
               <div className="team-name">{member.name}</div>
               <div className="team-role">{member.role}</div>
